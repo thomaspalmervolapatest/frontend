@@ -39,7 +39,7 @@ function DashboardCarousel(props) {
                                         <Col span={24}>
                                             <Row>
                                                 {props.cards.map((item, key) => (
-                                                    <Col span={8} >
+                                                    <Col span={8} key={key}>
                                                         <div className="m-t-10 m-r-12 m-b-12 m-l-10">
                                                             <Card.Grid className="full-width bg-white b-g rounded center-align-text hover-no-border">
                                                                 <Space direction="vertical">
