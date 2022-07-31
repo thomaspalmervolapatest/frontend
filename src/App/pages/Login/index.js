@@ -1,6 +1,10 @@
-import { Button, Card, Col, Form, Input, Row, Typography } from "antd";
+import { Button, Card, Col, Form, Input, Row, Typography } from 'antd';
 
-function Login() {
+import FormHandler from 'App/components/FormHandler';
+
+function Login({ form, working, handleInput }) {
+    console.log(form);
+
     return (
         <Row className="full-height" align="middle" justify="center">
             <Col xxl={6} xl={9} lg={12} md={12} sm={18} xs={22}>
@@ -15,19 +19,34 @@ function Login() {
                             <Col span={24}>
                                 <Form
                                     layout="vertical"
-                                    requiredMark={false}>
+                                    requiredMark={false}
+                                >
                                     <Form.Item
                                         label={<span className="muli semi-bold">Username</span>}
                                         name='username'
                                     >
-                                        <Input />
+                                        <Input
+                                            value={form.username}
+                                            onChange={(e) => handleInput('username', e.target.value)}
+                                        />
                                     </Form.Item>
                                     <Form.Item
                                         label={<span className="muli semi-bold">Password</span>}
-                                        name='password'>
-                                        <Input.Password />
+                                        name='password'
+                                    >
+                                        <Input.Password
+                                            value={form.password}
+                                            onChange={(e) => handleInput('password', e.target.value)}
+                                        />
                                     </Form.Item>
-                                    <Button type="primary" htmlType="submit" className="right-align-text">Login</Button>
+                                    <Button
+                                        type="primary"
+                                        htmlType="submit"
+                                        className="right-align-text"
+                                        disabled={working}
+                                    >
+                                        Login
+                                    </Button>
                                 </Form>
                             </Col>
                         </Row>
@@ -38,4 +57,4 @@ function Login() {
     );
 }
 
-export default Login;
+export default FormHandler(Login);

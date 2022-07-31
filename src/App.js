@@ -1,11 +1,10 @@
-import './App.css';
-import WalletDashboard from './App/pages/WalletDashboard';
+import Router from 'App/components/Router';
+
+import 'App.css';
 
 function App() {
   return (
-    <>
-      <WalletDashboard />
-    </>
+      <Router />
   );
 }
 

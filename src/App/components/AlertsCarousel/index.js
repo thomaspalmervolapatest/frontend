@@ -42,7 +42,7 @@ function AlertsCarousel() {
                                                         <Avatar shape="square" size={64} icon={<UserOutlined />} src={user} />
                                                         <Space direction="vertical" size={0}>
                                                             <Typography.Text className="fs-18px medium">{item.name}</Typography.Text>
-                                                            <Typography.Text className="light-green muli semi-bold fs-18px">{item.messsage}</Typography.Text>
+                                                            <Typography.Text className="light-green muli semi-bold fs-18px">{item.message}</Typography.Text>
                                                         </Space>
                                                     </Space>
                                                 </Col>
