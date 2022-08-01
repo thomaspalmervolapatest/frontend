@@ -1,6 +1,6 @@
 import { useEffect, useState, Fragment } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { Row, Col, Typography, Card, Form, Input, InputNumber, Select, Space, Progress, Button, Alert } from 'antd';
+import { Row, Col, Typography, Card, Form, InputNumber, Select, Space, Progress, Button, Alert } from 'antd';
 
 import useAxiosApi from 'App/hooks/useAxiosApi';
 
@@ -25,6 +25,7 @@ const RateChecker = () => {
 
                 setCurrencyRates(response.data.data);
             } catch (err) {
+                // Catch errors and ask the user to re-authenticate
                 navigate('/login', {
                     state: {
                         from: location,
