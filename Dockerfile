@@ -3,6 +3,8 @@ FROM node:18-alpine3.16 AS build_stage
 WORKDIR /usr/src
 
 COPY package*.json ./
+COPY jsconfig.json ./
+COPY .env ./
 RUN npm i
 
 COPY src src
