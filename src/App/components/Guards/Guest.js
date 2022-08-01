@@ -1,13 +1,13 @@
 import { Navigate } from 'react-router-dom';
 
-import { useAuth } from 'App/services/Auth';
+import useAuth from 'App/hooks/useAuth';
 
 const Guest = ({ children }) => {
-    const auth = useAuth();
+    const { auth } = useAuth();
 
-    if (auth.isAuthenticated) {
+    if (auth.accessToken) {
         return (
-            <Navigate 
+            <Navigate
                 to="/"
                 replace
             />

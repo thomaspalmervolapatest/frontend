@@ -4,6 +4,11 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import routes from 'App/config/routes';
 import guards from 'App/config/guards';
 
+// This router allows for multiple checks to be performed against routes, e.g. they're authenticated and their token
+// has the right permissions to access the page. In the routes file you can do this with:
+// { path: '/users', element: Users, guards: ['auth', 'has-scope:users.manage'] }.
+// I've been using a router like this for quite a while now, implementing this originally in React Router v5
+
 const Router = () => {
     return (
         <BrowserRouter>
@@ -49,7 +54,7 @@ const RenderRouteThroughGuard = ({ children, guards: routeGuards, previousGuard 
         guard = routeGuards[0];
     }
 
-    const guardParts = guard.split(':'); // 0 is the guard, 1 is comma separated parameters
+    const guardParts = guard.split(':'); // 0 is the guard, 1 and beyond is comma separated parameters
     const guardToCall = guardParts[0];
     const guardParameters = guardParts[1] ? guardParts[1].split(',') : [];
 

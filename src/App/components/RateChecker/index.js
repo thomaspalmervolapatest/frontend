@@ -1,8 +1,70 @@
-import { Row, Col, Typography, Card, Form, Input, Select, Space, Progress, Button } from 'antd'
+import { useEffect, useState, Fragment } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
+import { Row, Col, Typography, Card, Form, Input, InputNumber, Select, Space, Progress, Button, Alert } from 'antd';
 
-function RateChecker() {
+import useAxiosApi from 'App/hooks/useAxiosApi';
+
+const RateChecker = () => {
+    const axiosApi = useAxiosApi();
+    const navigate = useNavigate();
+    const location = useLocation();
+
+    const [form] = Form.useForm();
+    const [working, setWorking] = useState(false);
+    const [currencyRates, setCurrencyRates] = useState([]);
+    const [convertToAlert, setConvertToAlert] = useState(null);
+    const [convertFromAlert, setConvertFromAlert] = useState(null);
+
+    // Load in the currency rates from the API
+    useEffect(() => {
+        const getCurrencyRates = async () => {
+            setWorking(true);
+
+            try {
+                const response = await axiosApi.get('currency-rates');
+
+                setCurrencyRates(response.data.data);
+            } catch (err) {
+                navigate('/login', {
+                    state: {
+                        from: location,
+                    },
+                    replace: true,
+                });
+            }
+
+            setWorking(false);
+        };
+
+        getCurrencyRates();
+    }, []);
+
+    const handleSubmit = (form) => {
+        if (form.convertToCurrency && form.convertToAmount) {
+            // find the current record by ID so that we can get the currency name and rate
+            const currencyRate = currencyRates.find(rate => rate.id === form.convertToCurrency);
+
+            setConvertToAlert(`
+                If you convert ${form.convertToAmount} into ${currencyRate.currency} with a conversion rate of 1GBP  
+                = ${currencyRate.rate}${currencyRate.currency} you will receive  
+                ${currencyRate.rate * form.convertToAmount}${currencyRate.currency}`
+            );
+        }
+
+        if (form.convertFromCurrency && form.convertFromAmount) {
+            // find the current record by ID so that we can get the currency name and rate
+            const currencyRate = currencyRates.find(rate => rate.id === form.convertFromCurrency);
+
+            setConvertFromAlert(`
+                If you convert ${form.convertFromAmount} from ${currencyRate.currency} with a conversion rate of  
+                ${currencyRate.rate}${currencyRate.currency} = 1GBP you will receive  
+                ${(form.convertFromAmount / currencyRate.rate).toFixed(2)} GBP`
+            );
+        }
+    };
+
     return (
-        <>
+        <Fragment>
             <Row>
                 <Col span={24}>
                     <Typography.Text className='dark-green medium fs-25px'>Rate Checker</Typography.Text>
@@ -12,36 +74,55 @@ function RateChecker() {
                 <Col span={24}>
                     <Card>
                         <Card.Grid className='full-width rounded b-g hover-no-border'>
-                            <Form layout='vertical'>
+                            {convertToAlert && (<Alert type="success" message={convertToAlert} />)}
+                            {convertFromAlert && (<Alert type="success" message={convertFromAlert} />)}
+
+                            <Form form={form} layout='vertical' onFinish={handleSubmit}>
                                 <Row>
                                     <Col span={24}>
                                         <Form.Item
-                                            name='convertTo'
                                             label={<span className='muli semi-bold fs-18px'>Convert To</span>}
                                         >
                                             <Row gutter={8}>
                                                 <Col span={6}>
-                                                    <Select
-                                                        className='dark-green'
-                                                        showSearch
-                                                        filterOption={(input, option) => {
-                                                            if (option.children)
-                                                                return option.children.toLowerCase().includes(input.toLowerCase())
-                                                            else if (option.label)
-                                                                return option.label.toLowerCase().includes(input.toLowerCase())
-                                                        }}>
-                                                        <Select.OptGroup label='Common'>
-                                                            <Select.Option value="GBP">GBP</Select.Option>
-                                                            <Select.Option value="EUR">EUR</Select.Option>
-                                                        </Select.OptGroup>
-                                                        <Select.OptGroup label='Other'>
-                                                            <Select.Option value="USD">USD</Select.Option>
-                                                            <Select.Option value="AUD">AUD</Select.Option>
-                                                        </Select.OptGroup>
-                                                    </Select>
+                                                    <Form.Item
+                                                        name="convertToCurrency"
+                                                    >
+                                                        <Select
+                                                            className='dark-green'
+                                                            showSearch
+                                                            filterOption={(input, option) => {
+                                                                if (option.children)
+                                                                    return option.children.toLowerCase().includes(input.toLowerCase())
+                                                                else if (option.label)
+                                                                    return option.label.toLowerCase().includes(input.toLowerCase())
+                                                            }}
+                                                            disabled={working}
+                                                        >
+                                                            {currencyRates.length > 0 && (
+                                                                <Fragment>
+                                                                    <Select.OptGroup label='Common'>
+                                                                        {currencyRates.filter(rate => rate.common).map(rate => (
+                                                                            <Select.Option key={rate.id} value={rate.id}>{rate.currency}</Select.Option>
+                                                                        ))}
+                                                                    </Select.OptGroup>
+                                                                    <Select.OptGroup label='Other'>
+                                                                        {currencyRates.filter(rate => !rate.common).map(rate => (
+                                                                            <Select.Option key={rate.id} value={rate.id}>{rate.currency}</Select.Option>
+                                                                        ))}
+                                                                    </Select.OptGroup>
+                                                                </Fragment>
+                                                            )}
+                                                        </Select>
+                                                    </Form.Item>
                                                 </Col>
                                                 <Col span={18}>
-                                                    <Input placeholder='Enter Amount' />
+                                                    <Form.Item
+                                                        name="convertToAmount"
+                                                        rules={[{ type: 'number', message: 'Please enter a valid number' }]}
+                                                    >
+                                                        <InputNumber placeholder='Enter Amount' min={0.01} />
+                                                    </Form.Item>
                                                 </Col>
                                             </Row>
                                         </Form.Item>
@@ -51,27 +132,44 @@ function RateChecker() {
                                         >
                                             <Row gutter={8}>
                                                 <Col span={6}>
-                                                    <Select
-                                                        className='dark-green'
-                                                        showSearch
-                                                        filterOption={(input, option) => {
-                                                            if (option.children)
-                                                                return option.children.toLowerCase().includes(input.toLowerCase())
-                                                            else if (option.label)
-                                                                return option.label.toLowerCase().includes(input.toLowerCase())
-                                                        }}>
-                                                        <Select.OptGroup label='Common'>
-                                                            <Select.Option value="GBP">GBP</Select.Option>
-                                                            <Select.Option value="EUR">EUR</Select.Option>
-                                                        </Select.OptGroup>
-                                                        <Select.OptGroup label='Other'>
-                                                            <Select.Option value="USD">USD</Select.Option>
-                                                            <Select.Option value="AUD">AUD</Select.Option>
-                                                        </Select.OptGroup>
-                                                    </Select>
+                                                    <Form.Item
+                                                        name="convertFromCurrency"
+                                                    >
+                                                        <Select
+                                                            className='dark-green'
+                                                            showSearch
+                                                            filterOption={(input, option) => {
+                                                                if (option.children)
+                                                                    return option.children.toLowerCase().includes(input.toLowerCase())
+                                                                else if (option.label)
+                                                                    return option.label.toLowerCase().includes(input.toLowerCase())
+                                                            }}
+                                                            disabled={working}
+                                                        >
+                                                            {currencyRates.length > 0 && (
+                                                                <Fragment>
+                                                                    <Select.OptGroup label='Common'>
+                                                                        {currencyRates.filter(rate => rate.common).map(rate => (
+                                                                            <Select.Option key={rate.id} value={rate.id}>{rate.currency}</Select.Option>
+                                                                        ))}
+                                                                    </Select.OptGroup>
+                                                                    <Select.OptGroup label='Other'>
+                                                                        {currencyRates.filter(rate => !rate.common).map(rate => (
+                                                                            <Select.Option key={rate.id} value={rate.id}>{rate.currency}</Select.Option>
+                                                                        ))}
+                                                                    </Select.OptGroup>
+                                                                </Fragment>
+                                                            )}
+                                                        </Select>
+                                                    </Form.Item>
                                                 </Col>
                                                 <Col span={18}>
-                                                    <Input placeholder='Enter Amount' />
+                                                    <Form.Item
+                                                        name="convertFromAmount"
+                                                        rules={[{ type: 'number', message: 'Please enter a valid number' }]}
+                                                    >
+                                                        <InputNumber placeholder='Enter Amount' />
+                                                    </Form.Item>
                                                 </Col>
                                             </Row>
                                         </Form.Item>
@@ -88,7 +186,13 @@ function RateChecker() {
                                         </Space>
                                     </Col>
                                     <Col span={12} className='right-align-text'>
-                                        <Button type='primary' htmlType='submit'>Convert</Button>
+                                        <Button
+                                            type='primary'
+                                            htmlType='submit'
+                                            loading={working}
+                                        >
+                                            Convert
+                                        </Button>
                                     </Col>
                                 </Row>
                             </Form>
@@ -96,7 +200,7 @@ function RateChecker() {
                     </Card>
                 </Col>
             </Row>
-        </>
+        </Fragment>
     );
 }
 
