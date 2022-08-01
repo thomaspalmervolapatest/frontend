@@ -45,22 +45,28 @@ const RateChecker = () => {
             // find the current record by ID so that we can get the currency name and rate
             const currencyRate = currencyRates.find(rate => rate.id === form.convertToCurrency);
 
+            const { convertToAmount } = form;
+            const { currency, rate } = currencyRate;
+            const receiveAmount = (rate * convertToAmount).toFixed(2);
+
             setConvertToAlert(`
-                If you convert ${form.convertToAmount} into ${currencyRate.currency} with a conversion rate of 1GBP  
-                = ${currencyRate.rate}${currencyRate.currency} you will receive  
-                ${(currencyRate.rate * form.convertToAmount).toFixed(2)}${currencyRate.currency}`
-            );
+                If you convert ${convertToAmount} into ${currency} with a conversion rate of 1GBP  
+                = ${rate}${currency} you will receive ${receiveAmount}${currency}
+            `);
         }
 
         if (form.convertFromCurrency && form.convertFromAmount) {
             // find the current record by ID so that we can get the currency name and rate
             const currencyRate = currencyRates.find(rate => rate.id === form.convertFromCurrency);
 
+            const { convertFromAmount } = form;
+            const { currency, rate } = currencyRate;
+            const receiveAmount = (convertFromAmount / rate).toFixed(2);
+
             setConvertFromAlert(`
-                If you convert ${form.convertFromAmount} from ${currencyRate.currency} with a conversion rate of  
-                ${currencyRate.rate}${currencyRate.currency} = 1GBP you will receive  
-                ${(form.convertFromAmount / currencyRate.rate).toFixed(2)} GBP`
-            );
+                If you convert ${convertFromAmount} from ${currency} with a conversion rate of  
+                ${rate}${currency} = 1GBP you will receive ${receiveAmount} GBP
+            `);
         }
     };
 
