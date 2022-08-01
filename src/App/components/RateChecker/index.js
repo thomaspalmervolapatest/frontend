@@ -48,7 +48,7 @@ const RateChecker = () => {
             setConvertToAlert(`
                 If you convert ${form.convertToAmount} into ${currencyRate.currency} with a conversion rate of 1GBP  
                 = ${currencyRate.rate}${currencyRate.currency} you will receive  
-                ${currencyRate.rate * form.convertToAmount}${currencyRate.currency}`
+                ${(currencyRate.rate * form.convertToAmount).toFixed(2)}${currencyRate.currency}`
             );
         }
 
