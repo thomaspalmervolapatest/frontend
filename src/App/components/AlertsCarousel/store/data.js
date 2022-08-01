@@ -7,7 +7,7 @@ const notificationData = {
         {
             image: user,
             name: 'Lex',
-            messsage: 'Payment recived',
+            message: 'Payment received',
             type: 'Success',
             date: '02-11-21',
             send: 'GBP 10.00',
@@ -18,7 +18,7 @@ const notificationData = {
         {
             image: user,
             name: 'Lex',
-            messsage: 'Payment recived',
+            message: 'Payment received',
             type: 'success',
             date: '02-11-21',
             send: 'GBP 10.00',

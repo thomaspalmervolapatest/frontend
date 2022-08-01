@@ -24,11 +24,11 @@ function WalletBreakdown() {
                                                         <Col span={12}>
                                                             <Space>
                                                                 {item.image && <Image src={item.image} preview={false} width='36px' />}
-                                                                <Typography.Text className='dark-green medium fs-18px'>{item.currency && item.currency}</Typography.Text>
+                                                                <Typography.Text className='dark-green medium fs-17px'>{item.currency && item.currency}</Typography.Text>
                                                             </Space>
                                                         </Col>
                                                         <Col span={12} className='right-align-text'>
-                                                            <Typography.Text className='dark-green medium fs-18px'>{item.amount && item.amount}</Typography.Text>
+                                                            <Typography.Text className='dark-green medium fs-17px'>{item.amount && item.amount}</Typography.Text>
                                                         </Col>
                                                     </Row>
                                                 </Card>

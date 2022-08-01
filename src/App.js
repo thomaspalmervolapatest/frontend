@@ -1,12 +1,18 @@
-import './App.css';
-import WalletDashboard from './App/pages/WalletDashboard';
+import Router from 'App/components/Router';
+import Loader from 'App/components/Loader';
 
-function App() {
-  return (
-    <>
-      <WalletDashboard />
-    </>
-  );
+import { AuthProvider } from 'App/context/AuthProvider';
+
+import 'App.css';
+
+const App = () => {
+    return (
+        <AuthProvider>
+            <Loader>
+                <Router />
+            </Loader>
+        </AuthProvider>
+    );
 }
 
 export default App;
